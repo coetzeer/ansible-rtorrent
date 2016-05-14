@@ -1,5 +1,18 @@
 
 ---
+
+- name: Install deps and utils
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items:
+    - subversion
+  when: ansible_distribution == "Debian"
+
+- name: Install deps and utils
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - subversion
+  when: ansible_distribution == "RedHat"
+
 - name: Checkout xmlrpc from subversion
   subversion:
     repo: "http://svn.code.sf.net/p/xmlrpc-c/code/advanced"
