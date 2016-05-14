@@ -20,14 +20,16 @@
     - unzip
   when: ansible_os_family == "Debian"
 
+- name: Install Dev tools
+  yum: pkg="@Development tools" state=installed
+  when: ansible_os_family == "RedHat"
+
 - name: Install deps and utils
   yum: pkg={{ item }} state=installed
   with_items:
     - automake
-    - build-essential
     - bsdtar
     - curl
-    - git-core
     - libav-tools
     - libcppunit-dev
     - libcurl4-openssl-dev
