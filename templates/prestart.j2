@@ -1,0 +1,25 @@
+# check for configuration and session directory
+RTORRENTRC=/etc/rtorrent/rtorrent.rc
+
+# check for rtorrent.rc
+if [ -f ${RTORRENTRC} ]; then
+  # check config for session directory
+  SESSION_DIR=$(sed -n 's/^[[:space:]]*session[[:space:]]*=[[:space:]]*\(.*\)$/\1/p' ${RTORRENTRC})
+  if [ -z ${SESSION_DIR} ]; then
+    echo "ERROR: session directory not configured!"
+    exit 1
+  else
+    # make sure directory exists
+    mkdir -p ${SESSION_DIR}
+  fi
+
+  # check config for session.lock.set
+  USE_LOCK=$(sed -n 's/^[[:space:]]*session\.use_lock.set[[:space:]]*=[[:space:]]*\(.*\)$/\1/p' ${RTORRENTRC})
+  if [ "x$USE_LOCK" != "xyes" ]; then
+    echo "WARNING: for proper service control add this to rtorrent.rc: session.use_lock.set = yes"
+  fi
+else
+  # won't try to start without config
+  echo "ERROR: ${RTORRENTRC} not found!"
+  exit 1
+fi

@@ -1,0 +1,23 @@
+# rtorrent startup script
+[Install]
+WantedBy=multi-user.target
+
+[Unit]
+Description="rTorrent - BitTorrent client"
+Group={{ run_user }}
+User={{ run_user }}
+
+Requires=networking.service,local-fs.target
+Type=forking
+
+
+[Service]
+Environment=RTORRENTRC=/etc/rtorrent/rtorrent.rc
+Restart=on-failure
+ExecStartPre=/etc/rtorrent/prestart
+ExecStopPost=/etc/rtorrent/prestop
+
+# using setsid to avoid screen complaining about /var/run/screen permissions
+# invoking interactive shell after clean rtorrent shutdown to avoid immediate
+# termination of screen (stop command would end up in respawn-loop otherwise)
+ExecStart=setsid screen -Dm -S rtorrent sh -c 'rtorrent -n -o import=${RTORRENTRC} && exec sh'

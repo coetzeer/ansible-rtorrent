@@ -1,0 +1,20 @@
+# check for configuration and session directory
+RTORRENTRC=/etc/rtorrent/rtorrent.rc
+
+# stop rtorrent instance gracefully before upstart stop command kills the screen session
+
+# get session directory
+# as we're already running, there's no need to do all the sanity checks again
+SESSION_DIR=$(sed -n 's/^[[:space:]]*session[[:space:]]*=[[:space:]]*\(.*\)$/\1/p' ${RTORRENTRC})
+
+# now, if we have a pid file, we can perform a clean shutdown
+if [ -f ${SESSION_DIR}/rtorrent.lock ]; then
+  RT_PID=$(sed -n 's/^.*+\([0-9]\+\)$/\1/p' ${SESSION_DIR}/rtorrent.lock)
+  kill -2 $RT_PID
+  # wait until rtorrent exits
+  while kill -0 $RT_PID >/dev/null 2>&1; do
+    sleep 1
+  done
+else
+  echo "WARNING: No pid for rtorrent found. Did you set \"session.use_lock.set = yes\" in rtorrent.rc?"
+fi

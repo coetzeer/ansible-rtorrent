@@ -1,3 +1,110 @@
 ---
 - include: tasks/xmlrpc.yml
 - include: tasks/libtorrent.yml
+
+- name: git clone rakshasa/rtorrent
+  git:
+    repo: "https://github.com/rakshasa/rtorrent.git"
+    dest: /usr/src/rtorrent
+
+- name: Autogen rtorrent
+  command: "/bin/sh autogen.sh"
+  args:
+    chdir: /usr/src/rtorrent
+    creates: /usr/src/rtorrent/configure
+
+- name: Configure rtorrent
+  command: "/bin/sh configure --with-xmlrpc-c"
+  args:
+    chdir: /usr/src/rtorrent
+    creates: /usr/src/rtorrent/Makefile
+
+- name: Make rtorrent (Another long one)
+  command: "/usr/bin/make"
+  args:
+    chdir: /usr/src/rtorrent
+    creates: /usr/src/rtorrent/src/rtorrent
+
+- name: Install rtorrent
+  command: "/usr/bin/make install"
+  args:
+    chdir: /usr/src/rtorrent
+    creates: /usr/local/bin/rtorrent
+
+- name: ldconfig
+  command: "/sbin/ldconfig"
+
+# - name: Install rtorrent
+#   apt: pkg={{ item }} state=installed update_cache=yes
+#   with_items:
+#     - rtorrent
+
+- name: Create group
+  group:
+    name: "{{ run_user }}"
+    state: present
+
+- name: Create user
+  user:
+    name: "{{ run_user }}"
+    system: yes
+    home: /etc/rtorrent
+    group: "{{ run_user }}"
+    groups: www-data
+
+- name: Create config directory /etc/rtorrent
+  file:
+    path: /etc/rtorrent
+    state: directory
+    mode: 0755
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+
+- name: Apply config template
+  template:
+    src: rtorrent.rc
+    dest: /etc/rtorrent/rtorrent.rc
+    owner: "{{ run_user}}"
+    group: "{{ run_user}}"
+
+- name: Apply prestart template
+  template:
+    src: prestart.j2
+    dest: /etc/rtorrent/prestart
+    owner: "{{ run_user}}"
+    group: "{{ run_user}}"
+    mode: 0750
+
+- name: Apply post stop template
+  template:
+    src: prestop.j2
+    dest: /etc/rtorrent/prestop
+    owner: "{{ run_user}}"
+    group: "{{ run_user}}"
+    mode: 0750
+
+- name: Create session directory
+  file:
+    path: /etc/rtorrent/session
+    mode: 0755
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    state: directory
+
+- name: Create log directory
+  file:
+    path: /var/log/rtorrent
+    mode: 0755
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    state: directory
+
+- name: apply upstart script template for rtorrent
+  template: src=rtorrent.conf dest=/etc/init/rtorrent.conf
+  notify: restart rtorrent
+  when: ansible_service_mgr=="upstart"
+
+- name: apply systemd script template for rtorrent
+  template: src=rtorrent.systemd dest=/etc/systemd/system/rtorrent.service
+  notify: restart rtorrent
+  when: ansible_service_mgr=="systemd"
