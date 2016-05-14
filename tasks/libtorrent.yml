@@ -1,0 +1,43 @@
+---
+- name: Install deps and utils
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items:
+    - zlib1g-dev
+    - libssl-dev
+  when: ansible_distribution == "Debian"
+
+- name: Install deps and utils
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - zlib1g-dev
+    - libssl-dev
+  when: ansible_distribution == "RedHat"
+
+- name: git clone rakshasa/libtorrent
+  git:
+    repo: "https://github.com/rakshasa/libtorrent.git"
+    dest: /usr/src/libtorrent
+
+- name: Autogen libtorrent
+  command: "/bin/sh autogen.sh"
+  args:
+    chdir: /usr/src/libtorrent
+    creates: /usr/src/libtorrent/configure
+
+- name: Configure libtorrent
+  command: "/bin/sh configure"
+  args:
+    chdir: /usr/src/libtorrent
+    creates: /usr/src/libtorrent/Makefile
+
+- name: Make libtorrent (Takes a long time)
+  command: "/usr/bin/make"
+  args:
+    chdir: /usr/src/libtorrent
+    creates: /usr/src/libtorrent/src/.libs/libtorrent.so
+
+- name: Install libtorrent
+  command: "/usr/bin/make install"
+  args:
+    chdir: /usr/src/libtorrent
+    creates: /usr/local/lib/libtorrent.so
