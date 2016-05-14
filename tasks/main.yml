@@ -18,7 +18,7 @@
     - zip
     - unrar-free
     - unzip
-  when: ansible_distribution == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Install deps and utils
   yum: pkg={{ item }} state=installed
@@ -39,7 +39,7 @@
     - zip
     - unrar-free
     - unzip
-  when: ansible_distribution == "Debian"
+  when: ansible_os_family == "RedHat"
 
 - include: tasks/xmlrpc.yml
 - include: tasks/libtorrent.yml

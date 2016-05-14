@@ -4,14 +4,14 @@
   with_items:
     - zlib1g-dev
     - libssl-dev
-  when: ansible_distribution == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Install deps and utils
   yum: pkg={{ item }} state=installed
   with_items:
     - zlib1g-dev
     - libssl-dev
-  when: ansible_distribution == "RedHat"
+  when: ansible_os_family == "RedHat"
 
 - name: git clone rakshasa/libtorrent
   git:
