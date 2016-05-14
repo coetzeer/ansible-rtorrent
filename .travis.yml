@@ -33,6 +33,8 @@ script:
   # Install required Galaxy roles.
   #- 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-galaxy install geerlingguy.repo-remi geerlingguy.apache geerlingguy.php'
 
+  - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible all -m setup'
+
   # Ansible syntax check.
   - 'sudo docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml --syntax-check'
 

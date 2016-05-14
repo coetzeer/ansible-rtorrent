@@ -1,13 +1,13 @@
 
 ---
 
-- name: Install deps and utils
+- name: Install svn
   apt: pkg={{ item }} state=installed update_cache=yes
   with_items:
     - subversion
   when: ansible_distribution == "Debian"
 
-- name: Install deps and utils
+- name: Install svn
   yum: pkg={{ item }} state=installed
   with_items:
     - subversion
