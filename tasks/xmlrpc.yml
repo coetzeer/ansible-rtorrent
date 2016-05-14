@@ -1,0 +1,24 @@
+
+---
+- name: Checkout xmlrpc from subversion
+  subversion:
+    repo: "http://svn.code.sf.net/p/xmlrpc-c/code/advanced"
+    dest: /usr/src/xmlrpc-c
+
+- name: configure xmlrpc-c
+  command: "/bin/sh /usr/src/xmlrpc-c/configure"
+  args:
+    chdir: /usr/src/xmlrpc-c
+    creates: /usr/src/xmlrpc-c/config.log
+
+- name: Make xmlrpc-c
+  command: "/usr/bin/make"
+  args:
+    chdir: /usr/src/xmlrpc-c
+    creates: /usr/src/version.h
+
+- name: Install xmlrpc-c
+  command: "/usr/bin/make install"
+  args:
+    chdir: /usr/src/xmlrpc-c
+    creates: /usr/local/bin/xmlrpc-c-config

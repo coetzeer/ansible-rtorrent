@@ -1,2 +1,3 @@
 ---
+- include: tasks/xmlrpc.yml
 - include: tasks/libtorrent.yml
