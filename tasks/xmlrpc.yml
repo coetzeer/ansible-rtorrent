@@ -5,13 +5,13 @@
   apt: pkg={{ item }} state=installed update_cache=yes
   with_items:
     - subversion
-  when: ansible_distribution == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Install svn
   yum: pkg={{ item }} state=installed
   with_items:
     - subversion
-  when: ansible_distribution == "RedHat"
+  when: ansible_os_family == "RedHat"
 
 - name: Checkout xmlrpc from subversion
   subversion:
