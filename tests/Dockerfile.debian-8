@@ -1,8 +1,8 @@
 FROM debian:8
 RUN apt-get update
 
-RUN apt-get install python-pip python-dev git libyaml python-paramiko -y
-RUN pip install PyYAML jinja2
+RUN apt-get install python-pip python-dev git python-yaml python-paramiko -y
+RUN pip install jinja2
 
 # Install Ansible
 RUN cd ~ && \
