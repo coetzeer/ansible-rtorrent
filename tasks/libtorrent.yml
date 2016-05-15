@@ -42,7 +42,7 @@
     chdir: /usr/src/libtorrent
     creates: /usr/local/lib/libtorrent.so
 
-- name: Add /usr/local/bin to dynamic linker path
+- name: Add /usr/local/lib to dynamic linker path
   template:
     src: libtorrent.so.conf.j2
     dest: /etc/ld.so.conf.d/libtorrent.so.conf
