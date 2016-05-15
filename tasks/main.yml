@@ -100,7 +100,7 @@
     args:
       creates: /tmp/rtorrent_loaded
 
-  - file: path=/tmp/rtorrent_loaded state=touch
+  - file: path=/tmp/rtorrent_loaded state=file
 
 # - name: Install rtorrent
 #   apt: pkg={{ item }} state=installed update_cache=yes
