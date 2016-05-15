@@ -99,6 +99,8 @@
     command: "/sbin/ldconfig"
     args:
       creates: /tmp/rtorrent_loaded
+  rescue:
+  - file: path=touch /tmp/rtorrent_loaded state=absent
   always:
   - file: path=touch /tmp/rtorrent_loaded state=touch
 # - name: Install rtorrent
