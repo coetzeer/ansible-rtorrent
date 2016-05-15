@@ -1,6 +1,4 @@
-
 ---
-
 - name: Install svn
   apt: pkg={{ item }} state=installed update_cache=yes
   with_items:
@@ -28,7 +26,7 @@
   command: "/usr/bin/make"
   args:
     chdir: /usr/src/xmlrpc-c
-    creates: /usr/src/version.h
+    creates: /usr/src/xmlrpc-c/src/base_global.o
 
 - name: Install xmlrpc-c
   command: "/usr/bin/make install"
