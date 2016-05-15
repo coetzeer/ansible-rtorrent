@@ -71,7 +71,7 @@
     dest: /usr/src/rtorrent
 
 - name: Autogen rtorrent
-  command: "/bin/sh autogen.sh"
+  command: "/bin/sh -x autogen.sh"
   args:
     chdir: /usr/src/rtorrent
     creates: /usr/src/rtorrent/configure
@@ -96,11 +96,9 @@
 
 - block:
   - name: ldconfig
-    command: "/sbin/ldconfig"
+    command: "touch /tmp/rtorrent_loaded && /sbin/ldconfig"
     args:
       creates: /tmp/rtorrent_loaded
-
-  - file: path=/tmp/rtorrent_loaded state=file
 
 # - name: Install rtorrent
 #   apt: pkg={{ item }} state=installed update_cache=yes
