@@ -9,8 +9,8 @@
 - name: Install deps and utils
   yum: pkg={{ item }} state=installed
   with_items:
-    - zlib1g-dev
-    - libssl-dev
+    - zlib-devel
+    - openssl-devel
   when: ansible_os_family == "RedHat"
 
 - name: git clone rakshasa/libtorrent

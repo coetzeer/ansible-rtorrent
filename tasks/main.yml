@@ -24,42 +24,42 @@
   yum: pkg="@Development tools" state=installed
   when: ansible_os_family == "RedHat"
 
-- name: Install automake,bsdtar,curl
-  yum: pkg="{{item}}" state=installed
-  with_items:
-    - automake
-    - bsdtar
-    - curl
-    - zip
-    - unzip
-    - libcurl-devel
-    - openssl-devel
-    - libtool
-    - ncurses-devel
-    - libsigc++20
-    - mediainfo
-    - cppunit-devel
-  when: ansible_os_family == "RedHat"
+- block:
+  - name: Install automake,bsdtar,curl
+    yum: pkg="{{item}}" state=installed
+    with_items:
+      - automake
+      - bsdtar
+      - curl
+      - zip
+      - unzip
+      - libcurl-devel
+      - openssl-devel
+      - libtool
+      - ncurses-devel
+      - libsigc++20
+      - mediainfo
+      - cppunit-devel
 
-#TODO: figure out if we need this?
-#- name: Install libav-tools
-#  yum: pkg="libav-tools" state=installed
-#  when: ansible_os_family == "RedHat"
+  #TODO: figure out if we need this?
+  #- name: Install libav-tools
+  #  yum: pkg="libav-tools" state=installed
+  #  when: ansible_os_family == "RedHat"
 
-- name: install the repoforge repo
-  yum: name="http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm" state=present
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int == 7
+  - name: install the repoforge repo
+    yum: name="http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm" state=present
+    when: ansible_distribution_major_version|int == 7
 
-- name: install the repoforge repo
-  yum: name="rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm" state=present
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int == 6
+  - name: install the repoforge repo
+    yum: name="http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm" state=present
+    when: ansible_distribution_major_version|int == 6
 
-- name: Install unrar
-  yum: pkg="unrar" state=installed
-  when: ansible_os_family == "RedHat"
+  - name: Install unrar
+    yum: pkg="unrar" state=installed
 
-- name: Disable repoforge
-  lineinfile: dest=/etc/yum.repos.d/rpmforge.repo regexp='^enabled = 1' line='enabled = 0'
+  - name: Disable repoforge
+    lineinfile: dest=/etc/yum.repos.d/rpmforge.repo regexp='^enabled = 1' line='enabled = 0'
+
   when: ansible_os_family == "RedHat"
 
 - include: tasks/xmlrpc.yml
@@ -94,11 +94,13 @@
     chdir: /usr/src/rtorrent
     creates: /usr/local/bin/rtorrent
 
-- name: ldconfig
-  command: "/sbin/ldconfig && touch /tmp/rtorrent_loaded"
-  args:
-    creates: /tmp/rtorrent_loaded
-
+- block
+  - name: ldconfig
+    command: "/sbin/ldconfig"
+    args:
+      creates: /tmp/rtorrent_loaded
+  always:
+  - file: path=touch /tmp/rtorrent_loaded state=touch
 # - name: Install rtorrent
 #   apt: pkg={{ item }} state=installed update_cache=yes
 #   with_items:
