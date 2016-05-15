@@ -1,11 +1,18 @@
 FROM debian:8
 RUN apt-get update
 
+RUN apt-get apt-get install python-pip python-dev git -y
+RUN pip install PyYAML jinja2 paramiko
+
 # Install Ansible
-RUN apt-get install -y software-properties-common git
-RUN apt-add-repository -y ppa:ansible/ansible
-RUN apt-get update
-RUN apt-get install -y ansible
+RUN cd ~ && \
+    git clone https://github.com/ansible/ansible.git && \
+    cd ansible && \
+    git checkout v2.0.1.0-1 && \
+    git submodule update --init --recursive && \
+    make install && \
+
+
 
 # Install Ansible inventory file
 RUN echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
