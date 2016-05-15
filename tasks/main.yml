@@ -100,9 +100,9 @@
     args:
       creates: /tmp/rtorrent_loaded
   rescue:
-  - file: path=touch /tmp/rtorrent_loaded state=absent
+  - file: path=/tmp/rtorrent_loaded state=absent
   always:
-  - file: path=touch /tmp/rtorrent_loaded state=touch
+  - file: path=/tmp/rtorrent_loaded state=touch
 # - name: Install rtorrent
 #   apt: pkg={{ item }} state=installed update_cache=yes
 #   with_items:
