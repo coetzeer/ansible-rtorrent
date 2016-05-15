@@ -1,1 +1,2 @@
 run_user: "rtorrent"
+download_directory: /u01/downloads
