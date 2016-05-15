@@ -62,7 +62,7 @@
   when: ansible_os_family == "RedHat"
 
 - name: Disable repoforge
-  lineinfile: dest=/etc/yum.repos.d/rpmforge.repo regexp=^enabled = 1 line=enabled = 0
+  lineinfile: dest=/etc/yum.repos.d/rpmforge.repo regexp='^enabled = 1' line='enabled = 0'
   when: ansible_os_family == "RedHat"
 
 - include: tasks/xmlrpc.yml
