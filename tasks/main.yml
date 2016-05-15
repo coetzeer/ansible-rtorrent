@@ -27,11 +27,17 @@
 - name: Install automake,bsdtar,curl
   yum: pkg="{{item}}" state=installed
   with_items:
-  - automake
-  - bsdtar
-  - curl
-  - zip
-  - unzip
+    - automake
+    - bsdtar
+    - curl
+    - zip
+    - unzip
+    - libcurl-devel
+    - openssl-devel
+    - libtool
+    - ncurses-devel
+    - libsigc++20
+    - mediainfo
   when: ansible_os_family == "RedHat"
 
 #TODO: figure out if we need this?
@@ -39,32 +45,27 @@
 #  yum: pkg="libav-tools" state=installed
 #  when: ansible_os_family == "RedHat"
 
-- name: Install libcppunit-dev
-  yum: pkg="libcppunit-dev" state=installed
+- name: Install cppunit-devel
+  yum: pkg="cppunit-devel" state=installed
   when: ansible_os_family == "RedHat"
 
-- name: Install libcurl4-openssl-dev
-  yum: pkg="libcurl4-openssl-dev" state=installed
+- name: install the repoforge repo
+  yum: name="http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm" state=present
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == 7
+
+- name: install the repoforge repo
+  yum: name="rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm" state=present
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == 6
+
+- name: Install unrar
+  yum: pkg="unrar" state=installed
   when: ansible_os_family == "RedHat"
 
-- name: Install libncurses5-dev
-  yum: pkg="libncurses5-dev" state=installed
-  when: ansible_os_family == "RedHat"
-
-- name: Install libsigc++-2.0-dev
-  yum: pkg="libsigc++-2.0-dev" state=installed
-  when: ansible_os_family == "RedHat"
-
-- name: Install libtool
-  yum: pkg="libtool" state=installed
-  when: ansible_os_family == "RedHat"
-
-- name: Install mediainfo
-  yum: pkg="mediainfo" state=installed
-  when: ansible_os_family == "RedHat"
-
-- name: Install unrar-free
-  yum: pkg="unrar-free" state=installed
+- name: Disable repoforge
+  yum_repository:
+    name: rpmforge
+    file: /etc/yum.repos.d/rpmforge.repo
+    enabled: false
   when: ansible_os_family == "RedHat"
 
 - include: tasks/xmlrpc.yml
