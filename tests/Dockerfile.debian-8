@@ -1,16 +1,17 @@
 FROM debian:8
 RUN apt-get update
 
+# Install Ansible
 RUN apt-get install python-pip python-dev git python-yaml python-paramiko -y
 RUN pip install jinja2
 
-# Install Ansible
 RUN cd ~ && \
     git clone https://github.com/ansible/ansible.git && \
     cd ansible && \
     git checkout v2.0.1.0-1 && \
     git submodule update --init --recursive && \
     make install && \
+    mkdir /etc/ansible
 
 
 
